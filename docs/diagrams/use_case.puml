@@ -1,0 +1,48 @@
+@startuml CampusBite_UseCase
+left to right direction
+skinparam packageStyle rectangle
+
+actor "Student" as STU
+actor "Food Vendor" as VND
+actor "Campus Admin" as ADM
+
+rectangle "CampusBite System" {
+  usecase "Register & Login (JWT)" as UC1
+  usecase "Browse Stalls & Filter Menu" as UC2
+  usecase "Manage Cart & Select Pickup Slot" as UC3
+  usecase "Place Order & Simulated Payment" as UC4
+  usecase "Track Live Order Status" as UC5
+  usecase "Cancel Eligible Order" as UC6
+
+  usecase "Manage Stall Profile & Open/Close" as UC7
+  usecase "CRUD Menu Items & Upload Images" as UC8
+  usecase "Accept / Reject / Prepare / Complete Orders" as UC9
+  usecase "Restock Inventory & View Alerts" as UC10
+  usecase "View Stall Sales Analytics" as UC11
+
+  usecase "Manage Student & Vendor Accounts" as UC12
+  usecase "Create & Deactivate Food Stalls" as UC13
+  usecase "Monitor Global Orders & Inventory" as UC14
+  usecase "Configure Settings & Export CSV" as UC15
+}
+
+STU --> UC1
+STU --> UC2
+STU --> UC3
+STU --> UC4
+STU --> UC5
+STU --> UC6
+
+VND --> UC1
+VND --> UC7
+VND --> UC8
+VND --> UC9
+VND --> UC10
+VND --> UC11
+
+ADM --> UC1
+ADM --> UC12
+ADM --> UC13
+ADM --> UC14
+ADM --> UC15
+@enduml

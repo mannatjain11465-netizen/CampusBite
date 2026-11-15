@@ -1,0 +1,30 @@
+@startuml CampusBite_Sequence_Order
+actor Student
+participant "React CartDrawer" as UI
+participant "Express /api/orders" as API
+participant "OrderService" as SVC
+database "SQLite (node:sqlite)" as DB
+actor Vendor
+
+Student -> UI : Click "Confirm & Pay"
+UI -> API : POST /api/orders (Bearer JWT, idempotencyKey)
+API -> SVC : placeOrdersAtomically(params)
+SVC -> DB : BEGIN IMMEDIATE
+SVC -> DB : SELECT menu_items & food_stalls
+alt Stock sufficient & stall open
+  SVC -> DB : UPDATE menu_items SET stock_qty = stock_qty - qty WHERE stock_qty >= qty
+  SVC -> DB : INSERT orders, order_items, payments (Paid Simulated)
+  SVC -> DB : INSERT inventory_transactions (order_deduction)
+  SVC -> DB : INSERT notifications (new_order / low_stock)
+  SVC -> DB : COMMIT
+  SVC --> API : 201 Created (Order details)
+  API --> UI : Order Confirmation & Order Code
+  UI --> Student : Display Order Tracking Timeline
+  Vendor -> API : GET /api/orders/vendor-orders (poll)
+  API --> Vendor : New Order appears in Kitchen Queue
+else Insufficient stock or closed stall
+  SVC -> DB : ROLLBACK
+  SVC --> API : 409 Conflict
+  API --> UI : Error Toast (Stock unavailable)
+end
+@enduml

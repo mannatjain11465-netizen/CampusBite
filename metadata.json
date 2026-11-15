@@ -1,0 +1,6 @@
+{
+  "name": "CampusBite",
+  "description": "IIIT Allahabad Campus Food Court Order & Inventory Management System connecting students, food vendors, and campus administrators.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

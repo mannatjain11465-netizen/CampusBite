@@ -1,0 +1,42 @@
+@startuml CampusBite_ComponentDiagram
+package "Frontend SPA (React + Vite + Tailwind)" {
+  [LandingPage]
+  [StudentDashboard & CartDrawer]
+  [VendorDashboard]
+  [AdminDashboard]
+  [AuthContext / CartContext / ToastContext]
+  [API Client (src/lib/api.ts)]
+}
+
+package "Backend REST Server (Node.js + Express)" {
+  [Auth & RBAC Middleware]
+  [Auth Routes]
+  [Stalls & Menu Routes + Multer]
+  [Orders & Inventory Routes]
+  [Admin & Reports Routes]
+  [OrderService]
+  [InventoryService]
+}
+
+database "Persistence Layer" {
+  [SQLite DatabaseSync (campusbite.db)]
+  [Local Image Uploads (/uploads)]
+}
+
+[LandingPage] --> [API Client (src/lib/api.ts)]
+[StudentDashboard & CartDrawer] --> [API Client (src/lib/api.ts)]
+[VendorDashboard] --> [API Client (src/lib/api.ts)]
+[AdminDashboard] --> [API Client (src/lib/api.ts)]
+
+[API Client (src/lib/api.ts)] --> [Auth & RBAC Middleware]
+[Auth & RBAC Middleware] --> [Auth Routes]
+[Auth & RBAC Middleware] --> [Stalls & Menu Routes + Multer]
+[Auth & RBAC Middleware] --> [Orders & Inventory Routes]
+[Auth & RBAC Middleware] --> [Admin & Reports Routes]
+
+[Orders & Inventory Routes] --> [OrderService]
+[Orders & Inventory Routes] --> [InventoryService]
+[Stalls & Menu Routes + Multer] --> [Local Image Uploads (/uploads)]
+[OrderService] --> [SQLite DatabaseSync (campusbite.db)]
+[InventoryService] --> [SQLite DatabaseSync (campusbite.db)]
+@enduml

@@ -1,0 +1,101 @@
+@startuml CampusBite_ClassDiagram
+skinparam classAttributeIconSize 0
+
+class User {
+  +id: string
+  +name: string
+  +email: string
+  +passwordHash: string
+  +role: "student" | "vendor" | "admin"
+  +campusId: string
+  +isActive: boolean
+}
+
+class FoodStall {
+  +id: string
+  +vendorId: string
+  +name: string
+  +cuisineType: string
+  +location: string
+  +avgPrepMinutes: number
+  +isOpen: boolean
+  +isActive: boolean
+}
+
+class MenuItem {
+  +id: string
+  +stallId: string
+  +name: string
+  +category: string
+  +price: number
+  +stockQty: number
+  +lowStockThreshold: number
+  +isAvailable: boolean
+}
+
+class Order {
+  +id: string
+  +orderCode: string
+  +studentId: string
+  +stallId: string
+  +subtotal: number
+  +taxAmount: number
+  +platformFee: number
+  +totalAmount: number
+  +status: OrderStatus
+  +pickupTime: string
+  +idempotencyKey: string
+  +inventoryDeducted: boolean
+  +inventoryRestored: boolean
+}
+
+class OrderItem {
+  +id: string
+  +orderId: string
+  +menuItemId: string
+  +itemName: string
+  +unitPrice: number
+  +quantity: number
+  +lineTotal: number
+}
+
+class Payment {
+  +id: string
+  +orderId: string
+  +amount: number
+  +method: string
+  +status: string
+  +transactionRef: string
+  +isSimulated: boolean
+}
+
+class InventoryTransaction {
+  +id: string
+  +menuItemId: string
+  +stallId: string
+  +type: string
+  +previousQty: number
+  +changeQty: number
+  +newQty: number
+  +referenceId: string
+  +note: string
+}
+
+class Notification {
+  +id: string
+  +userId: string
+  +type: string
+  +title: string
+  +message: string
+  +isRead: boolean
+}
+
+User "1" --> "0..1" FoodStall : owns
+User "1" --> "0..*" Order : places
+FoodStall "1" --> "0..*" MenuItem : offers
+FoodStall "1" --> "0..*" Order : fulfills
+Order "1" *-- "1..*" OrderItem : contains
+Order "1" -- "1" Payment : settled_by
+MenuItem "1" --> "0..*" InventoryTransaction : audited_by
+User "1" --> "0..*" Notification : receives
+@enduml

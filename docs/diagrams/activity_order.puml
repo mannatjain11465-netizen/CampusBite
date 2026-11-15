@@ -1,0 +1,35 @@
+@startuml CampusBite_Activity_Order
+start
+:Student selects items and opens CartDrawer;
+:Select Pickup Time & Simulated Payment Method;
+:Click "Confirm & Pay";
+:POST /api/orders with JWT & idempotencyKey;
+
+if (Idempotency key already exists?) then (yes)
+  :Return existing confirmed order (no double deduction);
+  stop
+else (no)
+  :Begin SQLite IMMEDIATE Transaction;
+  if (Stall open & item available & stock_qty >= qty?) then (yes)
+    :Atomically deduct stock_qty;
+    :Create Order (Placed) + OrderItems + Payment (Paid Simulated);
+    :Log InventoryTransaction (order_deduction);
+    if (new_qty <= low_stock_threshold?) then (yes)
+      :Emit Low-Stock Notification to Vendor;
+    endif
+    :Commit Transaction & notify Vendor;
+  else (no)
+    :Rollback Transaction & return 409 Conflict;
+    stop
+  endif
+endif
+
+:Vendor receives order;
+if (Vendor accepts order?) then (yes)
+  :Accepted -> Preparing -> Ready -> Completed;
+else (no)
+  :Vendor sets Rejected;
+  :Restore stock_qty & mark Payment Refunded (Simulated);
+endif
+stop
+@enduml

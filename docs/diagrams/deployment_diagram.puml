@@ -1,0 +1,17 @@
+@startuml CampusBite_DeploymentDiagram
+node "Client Browser (Desktop / Tablet / Mobile)" {
+  artifact "CampusBite React SPA (dist/)" as SPA
+}
+
+node "Application Server (Node.js v22, Port 3000)" {
+  component "Express.js REST API" as API
+  component "Static File Server (/uploads, /dist)" as STATIC
+  file "campusbite.db (SQLite WAL)" as DB
+  folder "uploads/" as UPLOADS
+}
+
+SPA <--> API : HTTPS / JSON + Bearer JWT
+SPA <-- STATIC : Static Assets & Dish Photos
+API <--> DB : node:sqlite (ACID Transactions)
+API <--> UPLOADS : Multer Disk Storage
+@enduml
